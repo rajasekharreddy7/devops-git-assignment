@@ -14,4 +14,11 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            archiveArtifacts artifacts: 'ecommerce-app/target/*.jar',
+                             fingerprint: true
+        }
+    }
 }
