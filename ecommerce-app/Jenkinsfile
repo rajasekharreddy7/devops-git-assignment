@@ -9,7 +9,7 @@ pipeline {
         stage('Build & Test') {
             steps {
                 dir('ecommerce-app') {
-                    bat 'mvn clean test'
+                    bat 'mvn clean package'
                 }
             }
         }
