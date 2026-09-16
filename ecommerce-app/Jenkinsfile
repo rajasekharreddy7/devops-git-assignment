@@ -6,10 +6,18 @@ pipeline {
     }
 
     stages {
-        stage('Build & Test') {
+        stage('Build') {
             steps {
                 dir('ecommerce-app') {
-                    bat 'mvn clean package'
+                    bat 'mvn clean compile'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('ecommerce-app') {
+                    bat 'mvn test'
                 }
             }
         }
