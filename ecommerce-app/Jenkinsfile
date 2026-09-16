@@ -21,6 +21,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Package') {
+            steps {
+                dir('ecommerce-app') {
+                    bat 'mvn package -DskipTests'
+                }
+            }
+        }
     }
 
     post {
