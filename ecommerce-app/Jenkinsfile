@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    tools {
+        maven 'Maven'
+            }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/rajasekharreddy7/devops-git-assignment.git'
+            }
+        }
+       stage('Build & Test') {
+        steps {
+            dir('ecommerce-app') {
+                bat 'mvn clean test'
+               }
+            }
+        }
+        }
+    }
