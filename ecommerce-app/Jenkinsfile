@@ -29,12 +29,12 @@ pipeline {
                 }
             }
         }
-    }
         stage('Approval') {
             steps {
                 input message: 'Approve to continue?', ok: 'Approve'
             }
         }
+	}
 
     post {
         success {
