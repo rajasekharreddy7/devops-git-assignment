@@ -6,17 +6,17 @@ pipeline {
     }
 
     stages {
-    	
-	stage('AWS Identity Test') {
+
+        stage('AWS Identity Test') {
             steps {
-            	withCredentials([[
-                	$class: 'AmazonWebServicesCredentialsBinding',
-                	credentialsId: 'jenkins-ecr'
-            		]]) {
-                	bat 'aws sts get-caller-identity'
-            		}
-       		 }
-	}
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'jenkins-ecr'
+                ]]) {
+                    bat 'aws sts get-caller-identity'
+                }
+            }
+        }
 
         stage('Build') {
             steps {
@@ -42,60 +42,60 @@ pipeline {
             }
         }
 
-	stage('Docker Build') {
- 	   steps {
-        	dir('ecommerce-app') {
-           	 bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t ecommerce-app:1.0 .'
-        	}
-   	    }
-	}
+        stage('Docker Build') {
+            steps {
+                dir('ecommerce-app') {
+                    bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t ecommerce-app:1.0 .'
+                }
+            }
+        }
 
-	stage('ECR Login') {
- 	   steps {
-        	withCredentials([[
-            	$class: 'AmazonWebServicesCredentialsBinding',
-            	credentialsId: 'jenkins-ecr'
-        	]]) {
-            	bat 'aws ecr get-login-password --region ap-south-2 | "C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" login --username AWS --password-stdin 006419716500.dkr.ecr.ap-south-2.amazonaws.com'
-        	}
-    	   }
-	}
-	
-	stage('ECR Tag') {
- 	   steps {
-        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" tag ecommerce-app:1.0 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:1.0'
-    		}
-	}
+        stage('ECR Login') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'jenkins-ecr'
+                ]]) {
+                    bat 'aws ecr get-login-password --region ap-south-2 | "C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" login --username AWS --password-stdin 006419716500.dkr.ecr.ap-south-2.amazonaws.com'
+                }
+            }
+        }
 
-	stage('ECR Push') {
- 	   steps {
-        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" push 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:1.0'
-    		}
-	}
-
-	stage('Docker Run') {
- 	   steps {
-        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
-        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" run --name ecommerce-app-ci ecommerce-app:1.0'
-    		}
-    	   post {
-        	always {
-           	 bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
-        	}
-    	   }
-	}
+        stage('ECR Tag') {
+            steps {
+                bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" tag ecommerce-app:1.0 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:1.0'
+            }
+        }
 
         stage('Approval') {
             steps {
                 input message: 'Approve to continue?', ok: 'Approve'
             }
         }
-	}
 
-	    post {
-        	success {
-            	archiveArtifacts artifacts: 'ecommerce-app/target/*.jar',
+        stage('ECR Push') {
+            steps {
+                bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" push 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:1.0'
+            }
+        }
+
+        stage('Docker Run') {
+            steps {
+                bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
+                bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" run --name ecommerce-app-ci ecommerce-app:1.0'
+            }
+            post {
+                always {
+                    bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            archiveArtifacts artifacts: 'ecommerce-app/target/*.jar',
                              fingerprint: true
-        	}
-    	   }
-	}
+        }
+    }
+}
