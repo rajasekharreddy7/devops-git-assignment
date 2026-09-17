@@ -41,7 +41,6 @@ pipeline {
                 }
             }
         }
-
         stage('Docker Build') {
             steps {
                 dir('ecommerce-app') {
