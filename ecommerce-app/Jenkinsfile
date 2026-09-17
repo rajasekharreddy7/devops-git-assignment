@@ -40,11 +40,12 @@ pipeline {
 
 	stage('Docker Run') {
  	   steps {
+        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
         	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" run --name ecommerce-app-ci ecommerce-app:1.0'
     		}
-	   post {
+    	   post {
         	always {
-            	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm ecommerce-app-ci'
+           	 bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
         	}
     	   }
 	}
@@ -56,10 +57,10 @@ pipeline {
         }
 	}
 
-    post {
-        success {
-            archiveArtifacts artifacts: 'ecommerce-app/target/*.jar',
+	    post {
+        	success {
+            	archiveArtifacts artifacts: 'ecommerce-app/target/*.jar',
                              fingerprint: true
-        }
-    }
-}
+        	}
+    	   }
+	}
