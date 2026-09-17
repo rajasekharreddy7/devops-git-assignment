@@ -29,6 +29,13 @@ pipeline {
                 }
             }
         }
+
+	stage('Docker Test') {
+            steps {
+                bat 'docker version'
+            }
+        }
+
         stage('Approval') {
             steps {
                 input message: 'Approve to continue?', ok: 'Approve'
