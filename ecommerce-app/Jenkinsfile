@@ -38,6 +38,12 @@ pipeline {
    	    }
 	}
 
+	stage('Docker Run') {
+ 	   steps {
+        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" run --name ecommerce-app-ci ecommerce-app:1.0'
+    		}
+	}
+
         stage('Approval') {
             steps {
                 input message: 'Approve to continue?', ok: 'Approve'
