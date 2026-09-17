@@ -45,7 +45,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 dir('ecommerce-app') {
-                    bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t ecommerce-app:1.0 .'
+                    bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t ecommerce-app:%BUILD_NUMBER% .'
                 }
             }
         }
