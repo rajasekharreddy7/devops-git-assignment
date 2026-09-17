@@ -42,6 +42,11 @@ pipeline {
  	   steps {
         	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" run --name ecommerce-app-ci ecommerce-app:1.0'
     		}
+	   post {
+        	always {
+            	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm ecommerce-app-ci'
+        	}
+    	   }
 	}
 
         stage('Approval') {
