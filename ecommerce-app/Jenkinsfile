@@ -60,6 +60,12 @@ pipeline {
         	}
     	   }
 	}
+	
+	stage('ECR Tag') {
+ 	   steps {
+        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" tag ecommerce-app:1.0 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:1.0'
+    		}
+	}
 
 	stage('Docker Run') {
  	   steps {
