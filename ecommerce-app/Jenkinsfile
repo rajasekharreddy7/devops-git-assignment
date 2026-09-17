@@ -6,6 +6,19 @@ pipeline {
     }
 
     stages {
+    	
+	stage('AWS Identity Test') {
+            steps {
+            	withCredentials([[
+                	$class: 'AmazonWebServicesCredentialsBinding',
+                	credentialsId: 'jenkins-ecr'
+            		]]) {
+                	bat 'aws sts get-caller-identity'
+            		}
+       		 }
+   	 }
+
+    stage('Build') {
         stage('Build') {
             steps {
                 dir('ecommerce-app') {
