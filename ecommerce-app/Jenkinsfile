@@ -50,6 +50,17 @@ pipeline {
    	    }
 	}
 
+	stage('ECR Login') {
+ 	   steps {
+        	withCredentials([[
+            	$class: 'AmazonWebServicesCredentialsBinding',
+            	credentialsId: 'jenkins-ecr'
+        	]]) {
+            	bat 'aws ecr get-login-password --region ap-south-2 | "C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" login --username AWS --password-stdin 006419716500.dkr.ecr.ap-south-2.amazonaws.com'
+        	}
+    	   }
+	}
+
 	stage('Docker Run') {
  	   steps {
         	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
