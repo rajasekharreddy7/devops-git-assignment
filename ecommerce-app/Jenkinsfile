@@ -30,11 +30,13 @@ pipeline {
             }
         }
 
-	stage('Docker Test') {
-            steps {
-                bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" version'
-            }
-        }
+	stage('Docker Build') {
+ 	   steps {
+        	dir('ecommerce-app') {
+           	 bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t ecommerce-app:1.0 .'
+        	}
+   	    }
+	}
 
         stage('Approval') {
             steps {
