@@ -16,9 +16,8 @@ pipeline {
                 	bat 'aws sts get-caller-identity'
             		}
        		 }
-   	 }
+	}
 
-    stage('Build') {
         stage('Build') {
             steps {
                 dir('ecommerce-app') {
