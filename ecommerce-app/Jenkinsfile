@@ -67,6 +67,12 @@ pipeline {
     		}
 	}
 
+	stage('ECR Push') {
+ 	   steps {
+        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" push 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:1.0'
+    		}
+	}
+
 	stage('Docker Run') {
  	   steps {
         	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
