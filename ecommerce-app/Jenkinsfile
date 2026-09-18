@@ -78,11 +78,11 @@ pipeline {
             }
         }
 
-	stage('Kubernetes Test') {
- 	   steps {
+	stage('Kubernetes Deploy') {
+    	    steps {
         	withEnv(['KUBECONFIG=C:\\Users\\lavan\\.kube\\config']) {
-            	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" config current-context'
-            	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" get nodes'
+            	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" set image deployment/ecommerce-app ecommerce-app=006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:%BUILD_NUMBER% -n ecommerce-dev'
+            	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" rollout status deployment/ecommerce-app -n ecommerce-dev'
         	}
     	   }
 	}
