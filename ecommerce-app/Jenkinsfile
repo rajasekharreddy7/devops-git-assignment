@@ -86,19 +86,7 @@ pipeline {
         	}
     	   }
 	}
-
-        stage('Docker Run') {
-            steps {
-                bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
-                bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" run -d --name ecommerce-app-ci -p 8081:8081 ecommerce-app:%BUILD_NUMBER%'
-            }
-            post {
-                always {
-                    bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" rm -f ecommerce-app-ci || exit 0'
-                }
-            }
-        }
-    }
+	}
 
     post {
         success {
