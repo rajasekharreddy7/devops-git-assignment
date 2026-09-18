@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-app
+  namespace: ecommerce-dev
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: ecommerce-app
+
+  template:
+    metadata:
+      labels:
+        app: ecommerce-app
+
+    spec:
+      imagePullSecrets:
+        - name: ecr-registry-secret
+
+      containers:
+        - name: ecommerce-app
+          image: 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:36
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8080
