@@ -80,9 +80,11 @@ pipeline {
 
 	stage('Kubernetes Test') {
  	   steps {
-        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" config current-context'
-        	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" get nodes'
-    		}
+        	withEnv(['KUBECONFIG=C:\\Users\\lavan\\.kube\\config']) {
+            	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" config current-context'
+            	bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" get nodes'
+        	}
+    	   }
 	}
 
         stage('Docker Run') {
