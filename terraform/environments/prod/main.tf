@@ -1,11 +1,11 @@
 terraform {
-  
-backend "s3" {
-  bucket       = "rajasekhar-ecommerce-terraform-state"
-  key          = "ecommerce/prod/terraform.tfstate"
-  region       = "ap-south-2"
-  use_lockfile = true
-}
+
+  backend "s3" {
+    bucket       = "rajasekhar-ecommerce-terraform-state"
+    key          = "ecommerce/prod/terraform.tfstate"
+    region       = "ap-south-2"
+    use_lockfile = true
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"

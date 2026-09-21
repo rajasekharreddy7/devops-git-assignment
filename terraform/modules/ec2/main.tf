@@ -11,7 +11,7 @@ resource "aws_instance" "ecommerce" {
   }
 
   lifecycle {
-  prevent_destroy = true
-}
+    prevent_destroy = true
+  }
 
 }
