@@ -1,2 +1,7 @@
 target/
 *.class
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
