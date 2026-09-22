@@ -42,5 +42,12 @@ pipeline {
                 }
             }
         }
+
+	stage('Archive Terraform Plan') {
+    	    steps {
+        	archiveArtifacts artifacts: 'terraform/environments/dev/tfplan',
+                         fingerprint: true
+    		}
+	}
     }
 }
