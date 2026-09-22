@@ -5,8 +5,13 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                dir('terraform/environments/dev') {
-                    bat 'terraform init'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'jenkins-terraform'
+                ]]) {
+                    dir('terraform/environments/dev') {
+                        bat 'terraform init -input=false'
+                    }
                 }
             }
         }
