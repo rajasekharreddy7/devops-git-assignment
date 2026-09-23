@@ -49,5 +49,12 @@ pipeline {
                          fingerprint: true
     		}
 	}
+
+	stage('Terraform Approval') {
+    	   steps {
+        	input message: 'Review the Terraform plan and approve to continue', ok: 'Approve'
+    		}
+	}
+
     }
 }
