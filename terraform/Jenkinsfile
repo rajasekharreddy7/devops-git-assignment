@@ -1,6 +1,14 @@
 pipeline {
     agent any
 
+    parameters {
+       booleanParam(
+          name: 'APPLY_TERRAFORM',
+          defaultValue: false,
+          description: 'Apply the approved Terraform plan to AWS'
+          )
+    }
+
     stages {
 
         stage('Terraform Init') {
@@ -57,6 +65,13 @@ pipeline {
 	}
 	
 	stage('Terraform Apply') {
+
+	   when {
+        	expression {
+            	params.APPLY_TERRAFORM
+        	}
+    	   }
+
     	   steps {
         	withCredentials([[
             	$class: 'AmazonWebServicesCredentialsBinding',
