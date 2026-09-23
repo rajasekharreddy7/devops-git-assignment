@@ -1,0 +1,8 @@
+---
+- name: Configure Ecommerce Web Server
+  hosts: dev
+  become: true
+  gather_facts: true
+
+  roles:
+    - webserver

@@ -1,0 +1,10 @@
+---
+- name: Test Ansible
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  tasks:
+    - name: Display hostname
+      ansible.builtin.debug:
+        msg: "Ansible is working on {{ ansible_hostname }}"

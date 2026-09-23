@@ -1,0 +1,33 @@
+---
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Ensure nginx is running
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Deploy Ecommerce application page
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Reload nginx
+     
+- name: Deploy application secret configuration
+  ansible.builtin.copy:
+    content: |
+      APP_ENVIRONMENT={{ app_environment }}
+      APP_SECRET={{ app_secret }}
+    dest: /etc/ecommerce-app.conf
+    owner: root
+    group: root
+    mode: '0600'
+  no_log: true 

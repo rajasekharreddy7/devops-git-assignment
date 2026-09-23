@@ -1,0 +1,39 @@
+---
+- name: Configure Ecommerce Web Server
+  hosts: webservers
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Ensure nginx is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Deploy Ecommerce application page
+      ansible.builtin.copy:
+        dest: /var/www/html/index.html
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>E-Commerce Application</title>
+          </head>
+          <body>
+              <h1>E-Commerce Application</h1>
+              <p>Environment: DEV</p>
+              <p>Deployed using Ansible</p>
+          </body>
+          </html>
+        owner: root
+        group: root
+        mode: '0644'
+
