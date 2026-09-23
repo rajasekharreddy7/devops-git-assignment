@@ -55,6 +55,18 @@ pipeline {
         	input message: 'Review the Terraform plan and approve to continue', ok: 'Approve'
     		}
 	}
-
+	
+	stage('Terraform Apply') {
+    	   steps {
+        	withCredentials([[
+            	$class: 'AmazonWebServicesCredentialsBinding',
+            	credentialsId: 'jenkins-terraform'
+        	]]) {
+            	dir('terraform/environments/dev') {
+                bat 'terraform apply -input=false tfplan'
+            	}
+        	}
+    	}
+	}
     }
 }
