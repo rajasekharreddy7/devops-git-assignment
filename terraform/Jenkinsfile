@@ -2,12 +2,23 @@ pipeline {
     agent any
 
     parameters {
+
+       choice(
+        name: 'ENVIRONMENT',
+        choices: ['dev', 'prod'],
+        description: 'Select the Terraform environment'
+    	)
+
        booleanParam(
-          name: 'APPLY_TERRAFORM',
-          defaultValue: false,
-          description: 'Apply the approved Terraform plan to AWS'
-          )
+        name: 'APPLY_TERRAFORM',
+        defaultValue: false,
+        description: 'Apply the approved Terraform plan to AWS'
+        )
     }
+
+    environment {
+    	TF_ENV_DIR = "terraform/environments/${params.ENVIRONMENT}"
+	}
 
     stages {
 
@@ -17,9 +28,9 @@ pipeline {
                     $class: 'AmazonWebServicesCredentialsBinding',
                     credentialsId: 'jenkins-terraform'
                 ]]) {
-                    dir('terraform/environments/dev') {
-                        bat 'terraform init -input=false'
-                    }
+                    dir("${TF_ENV_DIR}") {
+ 			   bat 'terraform init -input=false'
+			}
                 }
             }
         }
@@ -32,9 +43,9 @@ pipeline {
 
         stage('Terraform Validate') {
             steps {
-                dir('terraform/environments/dev') {
-                    bat 'terraform validate'
-                }
+                dir("${TF_ENV_DIR}") {
+ 		   bat 'terraform validate'
+		}
             }
         }
 
