@@ -55,17 +55,17 @@ pipeline {
                     $class: 'AmazonWebServicesCredentialsBinding',
                     credentialsId: 'jenkins-terraform'
                 ]]) {
-                    dir('terraform/environments/dev') {
-                        bat 'terraform plan -input=false -out=tfplan'
-                    }
+                    dir("${TF_ENV_DIR}") {
+    			bat 'terraform plan -input=false -out=tfplan'
+			}
                 }
             }
         }
 
 	stage('Archive Terraform Plan') {
     	    steps {
-        	archiveArtifacts artifacts: 'terraform/environments/dev/tfplan',
-                         fingerprint: true
+			archiveArtifacts artifacts: "${TF_ENV_DIR}/tfplan",
+                 	fingerprint: true
     		}
 	}
 
@@ -80,16 +80,17 @@ pipeline {
 	   when {
         	expression {
             	params.APPLY_TERRAFORM
-        	}
-    	   }
+    	   	}
+	    }
 
     	   steps {
         	withCredentials([[
             	$class: 'AmazonWebServicesCredentialsBinding',
             	credentialsId: 'jenkins-terraform'
         	]]) {
-            	dir('terraform/environments/dev') {
-                bat 'terraform apply -input=false tfplan'
+            	dir("${TF_ENV_DIR}") {
+ 		   bat 'terraform apply -input=false tfplan'
+			}
             	}
         	}
     	}
