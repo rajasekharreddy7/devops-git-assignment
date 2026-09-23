@@ -18,7 +18,7 @@ pipeline {
 
     environment {
     	TF_ENV_DIR = "terraform/environments/${params.ENVIRONMENT}"
-	}
+    }
 
     stages {
 
@@ -94,6 +94,5 @@ pipeline {
             	}
         	}
     	}
-	}
     }
 }
