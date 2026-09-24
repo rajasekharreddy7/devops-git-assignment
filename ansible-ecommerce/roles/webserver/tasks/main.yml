@@ -20,6 +20,8 @@
     mode: '0644'
   notify:
     - Reload nginx
+  tags:
+    - deploy
      
 - name: Deploy application secret configuration
   ansible.builtin.copy:
