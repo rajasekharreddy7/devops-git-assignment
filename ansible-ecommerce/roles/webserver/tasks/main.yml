@@ -31,3 +31,11 @@
     group: root
     mode: '0600'
   no_log: true 
+
+- name: Verify ecommerce application health
+  ansible.builtin.uri:
+    url: http://localhost
+    status_code: 200
+    return_content: true
+  register: health_check
+  failed_when: "'Version: ' ~ app_version not in health_check.content"
