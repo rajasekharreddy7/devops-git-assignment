@@ -1,0 +1,117 @@
+---
+- name: Practice Ansible Error Handling
+  hosts: dev
+  gather_facts: true
+
+  vars:
+    deploy_environment: prod
+    deploy_enabled: true
+    app_version: "10.0"
+
+  tasks:
+
+    - name: Set deployment version dynamically
+      ansible.builtin.set_fact:
+        app_version: "40.0"
+
+    - name: Display application version
+      ansible.builtin.debug:
+        msg: "Application version is {{ app_version }}"
+
+    - name: Display server OS
+      ansible.builtin.debug:
+        msg: "Server OS is {{ ansible_distribution }}"
+
+    - name: Run Ubuntu specific task
+      ansible.builtin.debug:
+        msg: "This server is running Ubuntu"
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Demonstrate block rescue always
+      block:
+
+        - name: Successful task
+          ansible.builtin.debug:
+            msg: "Task 1 completed successfully"
+
+        - name: Run command and capture result
+          ansible.builtin.command:
+            cmd: /bin/true
+          register: command_result
+          changed_when: false
+          failed_when: command_result.rc != 0
+
+        - name: Show success message
+          ansible.builtin.debug:
+            msg: "Command completed successfully"
+          when: command_result.rc == 0
+
+        - name: Display command result
+          ansible.builtin.debug:
+            var: command_result
+
+        - name: Check nginx service
+          ansible.builtin.command:
+            cmd: systemctl is-active nginx
+          register: nginx_status
+          changed_when: false
+
+        - name: Display nginx status
+          ansible.builtin.debug:
+            msg: "Nginx is running"
+          when: nginx_status.stdout == "active"
+
+      rescue:
+
+        - name: Recovery action
+          ansible.builtin.debug:
+            msg: "Recovery action executed after failure"
+
+      always:
+
+        - name: Always execute this task
+          ansible.builtin.debug:
+            msg: "Always runs regardless of success or failure"
+
+    - name: Run only in dev environment
+      ansible.builtin.debug:
+        msg: "This task runs because environment is DEV"
+      when:
+        - deploy_environment == "dev"
+        - deploy_enabled
+
+    - name: Install required packages
+      become: true
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      loop:
+        - nginx
+        - git
+        - curl
+
+    - name: Display user configuration
+      ansible.builtin.debug:
+        msg: "User {{ user.name }} uses shell {{ user.shell }}"
+      loop:
+        - name: appuser
+          shell: /bin/bash
+        - name: deployuser
+          shell: /bin/bash
+      loop_control:
+        loop_var: user
+
+    - name: Display enabled components
+      ansible.builtin.debug:
+        msg: "Installing {{ component.name }}"
+      loop:
+        - name: nginx
+          enabled: true
+        - name: apache
+          enabled: false
+        - name: redis
+          enabled: true
+      loop_control:
+        loop_var: component
+      when: component.enabled
