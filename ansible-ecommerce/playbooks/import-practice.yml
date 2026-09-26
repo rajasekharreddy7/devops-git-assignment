@@ -1,0 +1,9 @@
+---
+- name: Practice import_tasks
+  hosts: dev
+  gather_facts: true
+
+  tasks:
+    - name: Import system information tasks
+      ansible.builtin.import_tasks:
+        file: tasks/system-info.yml

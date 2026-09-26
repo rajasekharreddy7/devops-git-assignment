@@ -1,0 +1,10 @@
+---
+- name: Practice include_role
+  hosts: dev
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Include webserver role
+      ansible.builtin.include_role:
+        name: webserver

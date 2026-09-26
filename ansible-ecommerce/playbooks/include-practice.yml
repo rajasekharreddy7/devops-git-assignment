@@ -1,0 +1,13 @@
+---
+- name: Practice include_tasks
+  hosts: dev
+  gather_facts: true
+
+  vars:
+    target_environment: dev
+
+  tasks:
+    - name: Include system information tasks
+      ansible.builtin.include_tasks:
+        file: tasks/system-info.yml
+      when: target_environment == "dev"

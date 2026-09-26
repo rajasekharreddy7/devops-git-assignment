@@ -1,0 +1,8 @@
+---
+- name: Display target hostname
+  ansible.builtin.debug:
+    msg: "Target hostname is {{ ansible_hostname }}"
+
+- name: Display operating system
+  ansible.builtin.debug:
+    msg: "Operating system is {{ ansible_distribution }} {{ ansible_distribution_version }}"

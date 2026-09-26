@@ -1,0 +1,10 @@
+---
+- name: Practice import_role
+  hosts: dev
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Import webserver role
+      ansible.builtin.import_role:
+        name: webserver
