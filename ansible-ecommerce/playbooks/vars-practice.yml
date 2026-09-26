@@ -1,0 +1,127 @@
+---
+- name: Practice environment-specific variables
+  hosts: dev
+  gather_facts: false
+
+  vars:
+    target_environment: dev
+    app_owner: "Platform Engineering"
+    users:
+      - name: appuser
+        shell: /bin/bash
+        enabled: true
+      - name: deployuser
+        shell: /bin/bash
+        enabled: false
+      - name: adminuser
+        shell: /bin/bash
+        enabled: true
+    app_ports:
+      http: 80
+      https: 443
+      application: 8081
+    port_items:
+      - key: http
+        value: 80
+      - key: https
+        value: 443
+      - key: application
+        value: 8081
+
+  tasks:
+
+    - name: Load DEV variables
+      ansible.builtin.include_vars:
+        file: vars/dev.yml
+      when: target_environment == "dev"
+
+    - name: Load PROD variables
+      ansible.builtin.include_vars:
+        file: vars/prod.yml
+      when: target_environment == "prod"
+
+    - name: Demonstrate Jinja2 default filter
+      ansible.builtin.debug:
+        msg: "Application owner: {{ app_owner | default('DevOps Team') }}"
+
+    - name: Demonstrate Jinja2 upper filter
+      ansible.builtin.debug:
+        msg: "Environment: {{ practice_environment | upper }}"
+
+    - name: Demonstrate Jinja2 lower filter
+      ansible.builtin.debug:
+        msg: "Environment: {{ practice_environment | lower }}"
+
+    - name: Demonstrate Jinja2 replace filter
+      ansible.builtin.debug:
+        msg: "Application: {{ practice_app_name | replace('-', '_') }}"
+
+    - name: Demonstrate Jinja2 trim filter
+      ansible.builtin.debug:
+        msg: "Application: {{ practice_app_name | trim }}"
+
+    - name: Demonstrate Jinja2 length filter
+      ansible.builtin.debug:
+        msg: "Application name length: {{ practice_app_name | length }}"
+
+    - name: Demonstrate Jinja2 int filter
+      ansible.builtin.debug:
+        msg: "Application version number: {{ '50' | int }}"
+
+    - name: Demonstrate Jinja2 bool filter
+      ansible.builtin.debug:
+        msg: "Deployment enabled: {{ 'true' | bool }}"
+
+    - name: Demonstrate Jinja2 join filter
+      ansible.builtin.debug:
+        msg: "Allowed services: {{ ['nginx', 'git', 'curl'] | join(', ') }}"
+
+    - name: Demonstrate Jinja2 map filter
+      ansible.builtin.debug:
+        msg: "Users: {{ users | map(attribute='name') | join(', ') }}"
+
+    - name: Demonstrate Jinja2 selectattr filter
+      ansible.builtin.debug:
+        msg: "Enabled users: {{ users | selectattr('enabled', 'equalto', true) | map(attribute='name') | join(', ') }}"
+
+    - name: Demonstrate Jinja2 dict2items filter
+      ansible.builtin.debug:
+        msg: "Port {{ item.key }} = {{ item.value }}"
+      loop: "{{ app_ports | dict2items }}"
+
+    - name: Demonstrate Jinja2 items2dict filter
+      ansible.builtin.debug:
+        msg: "{{ port_items | items2dict }}"
+
+    - name: Demonstrate Jinja2 type_debug filter
+      ansible.builtin.debug:
+        msg:
+          - "App version type: {{ practice_app_version | type_debug }}"
+          - "Port type: {{ practice_port | type_debug }}"
+          - "Users type: {{ users | type_debug }}"
+          - "App ports type: {{ app_ports | type_debug }}"
+
+    - name: Demonstrate Jinja2 to_json filter
+      ansible.builtin.debug:
+        msg: "{{ app_ports | to_json }}"
+
+    - name: Demonstrate Jinja2 from_json filter
+      ansible.builtin.debug:
+        msg: "{{ '{\"http\": 80, \"https\": 443, \"application\": 8081}' | from_json }}"         
+
+    - name: Render application configuration template
+      become: true
+      ansible.builtin.template:
+        src: ../roles/webserver/templates/app-config.conf.j2
+        dest: /tmp/ecommerce-app.conf
+        owner: root
+        group: root
+        mode: '0644'         
+
+    - name: Display application configuration
+      ansible.builtin.debug:
+        msg: >-
+          Application {{ practice_app_name }}
+          version {{ practice_app_version }}
+          environment {{ practice_environment }}
+          port {{ practice_port }}

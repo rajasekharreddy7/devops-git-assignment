@@ -1,0 +1,25 @@
+# E-Commerce Application Configuration
+
+{# This is a Jinja2 comment and will not appear in the rendered file #}
+APP_NAME={{ practice_app_name }}
+APP_VERSION={{ practice_app_version }}
+ENVIRONMENT={{ practice_environment }}
+APP_PORT={{ practice_port }}
+
+DEBUG={{ 'true' if practice_environment == 'dev' else 'false' }}
+{% if practice_environment == 'dev' %}
+DEPLOYMENT_MODE=development
+{% elif practice_environment == 'prod' %}
+DEPLOYMENT_MODE=production
+{% else %}
+DEPLOYMENT_MODE=unknown
+{% endif %}
+
+# Enabled users
+{% for user in users %}
+{% if user.enabled %}
+USER={{ user.name }}
+{% endif %}
+{% endfor %}
+
+APPLICATION_ID={{ practice_app_name ~ '-' ~ practice_environment }}

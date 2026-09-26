@@ -1,0 +1,5 @@
+---
+practice_app_name: ecommerce-app
+practice_app_version: "60.0"
+practice_environment: prod
+practice_port: 8081
