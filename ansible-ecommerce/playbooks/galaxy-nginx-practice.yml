@@ -1,0 +1,11 @@
+---
+- name: Practice Ansible Galaxy Role
+  hosts: dev
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: geerlingguy.nginx
+      nginx_remove_default_vhost: false
+      nginx_service_state: started
+      nginx_service_enabled: true

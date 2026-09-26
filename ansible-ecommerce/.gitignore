@@ -3,3 +3,6 @@
 .vault_pass
 *.pem
 *.key
+
+# Ansible Galaxy downloaded roles
+roles/geerlingguy.nginx/
