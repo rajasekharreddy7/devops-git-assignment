@@ -1,6 +1,11 @@
 #!/bin/bash
 
-EC2_IP=$(cd /mnt/c/Users/lavan/devops-git-assignment/terraform/environments/dev && terraform.exe output -raw ec2_public_ip)
+if [ -z "$TERRAFORM_DEV_DIR" ]; then
+    echo "ERROR: TERRAFORM_DEV_DIR is not set."
+    exit 1
+fi
+
+EC2_IP=$(cd "$TERRAFORM_DEV_DIR" && terraform.exe output -raw ec2_public_ip)
 
 if [ -z "$EC2_IP" ]; then
     echo "ERROR: Terraform did not return an EC2 IP."
