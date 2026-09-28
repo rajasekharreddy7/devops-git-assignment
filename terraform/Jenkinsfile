@@ -1,26 +1,51 @@
 pipeline {
-    agent any
+    agent {
+        label 'linux'
+    }
 
     parameters {
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['dev', 'prod'],
+            description: 'Select the Terraform environment'
+        )
 
-       choice(
-        name: 'ENVIRONMENT',
-        choices: ['dev', 'prod'],
-        description: 'Select the Terraform environment'
-    	)
-
-       booleanParam(
-        name: 'APPLY_TERRAFORM',
-        defaultValue: false,
-        description: 'Apply the approved Terraform plan to AWS'
+        booleanParam(
+            name: 'APPLY_TERRAFORM',
+            defaultValue: false,
+            description: 'Apply the approved Terraform plan to AWS'
         )
     }
 
     environment {
-    	TF_ENV_DIR = "terraform/environments/${params.ENVIRONMENT}"
+        TF_ENV_DIR = "terraform/environments/${params.ENVIRONMENT}"
     }
 
     stages {
+
+        stage('Verify Linux Tools') {
+            steps {
+                sh '''
+                    echo "=== Host ==="
+                    hostname
+
+                    echo "=== Git ==="
+                    git --version
+
+                    echo "=== Java ==="
+                    java --version
+
+                    echo "=== Terraform ==="
+                    terraform version
+
+                    echo "=== Ansible ==="
+                    ansible --version
+
+                    echo "=== Docker ==="
+                    docker --version
+                '''
+            }
+        }
 
         stage('Terraform Init') {
             steps {
@@ -29,23 +54,23 @@ pipeline {
                     credentialsId: 'jenkins-terraform'
                 ]]) {
                     dir("${TF_ENV_DIR}") {
- 			   bat 'terraform init -input=false'
-			}
+                        sh 'terraform init -input=false'
+                    }
                 }
             }
         }
 
         stage('Terraform Format') {
             steps {
-                bat 'terraform fmt -check -recursive terraform'
+                sh 'terraform fmt -check -recursive terraform'
             }
         }
 
         stage('Terraform Validate') {
             steps {
                 dir("${TF_ENV_DIR}") {
- 		   bat 'terraform validate'
-		}
+                    sh 'terraform validate'
+                }
             }
         }
 
@@ -56,43 +81,52 @@ pipeline {
                     credentialsId: 'jenkins-terraform'
                 ]]) {
                     dir("${TF_ENV_DIR}") {
-    			bat 'terraform plan -input=false -out=tfplan'
-			}
+                        sh 'terraform plan -input=false -out=tfplan'
+                    }
                 }
             }
         }
 
-	stage('Archive Terraform Plan') {
-    	    steps {
-			archiveArtifacts artifacts: "${TF_ENV_DIR}/tfplan",
-                 	fingerprint: true
-    		}
-	}
+        stage('Archive Terraform Plan') {
+            steps {
+                archiveArtifacts(
+                    artifacts: "${TF_ENV_DIR}/tfplan",
+                    fingerprint: true
+                )
+            }
+        }
 
-	stage('Terraform Approval') {
-    	   steps {
-        	input message: 'Review the Terraform plan and approve to continue', ok: 'Approve'
-    		}
-	}
-	
-	stage('Terraform Apply') {
+        stage('Terraform Approval') {
+            when {
+                expression {
+                    params.APPLY_TERRAFORM
+                }
+            }
+            steps {
+                input(
+                    message: 'Review the Terraform plan and approve to continue',
+                    ok: 'Approve'
+                )
+            }
+        }
 
-	   when {
-        	expression {
-            	params.APPLY_TERRAFORM
-    	   	}
-	    }
-
-    	   steps {
-        	withCredentials([[
-            	$class: 'AmazonWebServicesCredentialsBinding',
-            	credentialsId: 'jenkins-terraform'
-        	]]) {
-            	dir("${TF_ENV_DIR}") {
- 		   bat 'terraform apply -input=false tfplan'
-			}
-            	}
-        	}
-    	}
+        stage('Terraform Apply') {
+            when {
+                expression {
+                    params.APPLY_TERRAFORM
+                }
+            }
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'jenkins-terraform'
+                ]]) {
+                    dir("${TF_ENV_DIR}") {
+                        sh 'terraform apply -input=false tfplan'
+                    }
+                }
+            }
+        }
     }
 }
+
