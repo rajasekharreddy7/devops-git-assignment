@@ -37,27 +37,12 @@ module "security_group" {
 module "ec2" {
   source = "../../modules/ec2"
 
-  ami_id            = data.aws_ami.ubuntu.id
+  ami_id            = var.ami_id
   instance_type     = var.instance_type
   subnet_id         = module.vpc.public_subnet_id
   security_group_id = module.security_group.security_group_id
   key_name          = aws_key_pair.ecommerce.key_name
   instance_name     = var.instance_name
-}
-
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"]
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
 }
 
 resource "aws_key_pair" "ecommerce" {

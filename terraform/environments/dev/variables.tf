@@ -48,3 +48,8 @@ variable "public_key_path" {
   type        = string
   default     = "~/.ssh/id_ed25519.pub"
 }
+
+variable "ami_id" {
+  description = "AMI ID for the EC2 instance"
+  type        = string
+}

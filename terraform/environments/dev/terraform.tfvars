@@ -11,3 +11,5 @@ security_group_name = "ecommerce-dev-sg"
 instance_name       = "ecommerce-dev-server"
 
 key_name        = "ecommerce-dev-key"
+
+ami_id = "ami-001162706032ff3b3"
