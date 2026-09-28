@@ -1,0 +1,49 @@
+pipeline {
+    agent {
+        label 'linux'
+    }
+
+    parameters {
+        string(
+            name: 'GIT_BRANCH',
+            defaultValue: 'main',
+            description: 'Git branch to deploy'
+        )
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                sh """
+                    rm -rf devops-git-assignment
+
+                    git clone \
+                        --branch "${GIT_BRANCH}" \
+                        --single-branch \
+                        https://github.com/rajasekharreddy7/devops-git-assignment.git \
+                        devops-git-assignment
+
+                    cd devops-git-assignment
+
+                    echo "=== Branch ==="
+                    git branch --show-current
+
+                    echo "=== Commit ==="
+                    git log -1 --oneline
+                """
+            }
+        }
+
+        stage('Run Ansible') {
+            steps {
+                sh '''
+                    cd devops-git-assignment/ansible-ecommerce
+
+                    ansible-playbook playbooks/site.yml \
+                        --vault-password-file ~/.ansible-vault-password
+                '''
+            }
+        }
+    }
+}
