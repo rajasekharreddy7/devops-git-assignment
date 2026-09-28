@@ -11,4 +11,3 @@ security_group_name = "ecommerce-dev-sg"
 instance_name       = "ecommerce-dev-server"
 
 key_name        = "ecommerce-dev-key"
-public_key_path = "C:/Users/lavan/.ssh/id_ed25519.pub"
