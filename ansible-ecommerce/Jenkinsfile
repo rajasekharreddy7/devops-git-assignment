@@ -3,35 +3,21 @@ pipeline {
         label 'linux'
     }
 
-    parameters {
-        string(
-            name: 'GIT_BRANCH',
-            defaultValue: 'main',
-            description: 'Git branch to deploy'
-        )
-    }
-
     stages {
 
-        stage('Checkout Code') {
+        stage('Verify Code') {
             steps {
-                sh """
-                    rm -rf devops-git-assignment
-
-                    git clone \
-                        --branch "${GIT_BRANCH}" \
-                        --single-branch \
-                        https://github.com/rajasekharreddy7/devops-git-assignment.git \
-                        devops-git-assignment
-
-                    cd devops-git-assignment
+                sh '''
 
                     echo "=== Branch ==="
                     git branch --show-current
 
                     echo "=== Commit ==="
                     git log -1 --oneline
-                """
+
+                    echo "=== Jenkinsfile ==="
+                    ls -l ansible-ecommerce/Jenkinsfile
+                '''
             }
         }
 
