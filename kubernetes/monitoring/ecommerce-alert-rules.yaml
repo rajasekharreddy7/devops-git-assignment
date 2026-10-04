@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ecommerce-alert-rules
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: ecommerce.rules
+      rules:
+        - alert: EcommerceAppDown
+          expr: kube_deployment_status_replicas_available{namespace="ecommerce-dev",deployment="ecommerce-app"} < 1
+          for: 30s
+          labels:
+            severity: critical
+          annotations:
+            summary: "Ecommerce application is down"
+            description: "The ecommerce-app deployment has no available replicas for more than 30 seconds."

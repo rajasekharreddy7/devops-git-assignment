@@ -1,0 +1,36 @@
+kubeStateMetrics:
+  enabled: false
+
+alertmanager:
+  alertmanagerSpec:
+    secrets:
+      - alertmanager-gmail
+
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      group_by:
+        - namespace
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: gmail
+      routes:
+        - receiver: "null"
+          matchers:
+            - alertname = "Watchdog"
+
+    receivers:
+      - name: "null"
+
+      - name: gmail
+        email_configs:
+          - to: "sekharreddyr77@gmail.com"
+            from: "sekharreddyr77@gmail.com"
+            smarthost: "smtp.gmail.com:587"
+            auth_username: "sekharreddyr77@gmail.com"
+            auth_password_file: "/etc/alertmanager/secrets/alertmanager-gmail/password"
+            require_tls: true
+            send_resolved: true
