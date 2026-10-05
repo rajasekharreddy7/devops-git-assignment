@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ecommerce-prune-test
-data:
-  purpose: "Argo CD prune testing"
