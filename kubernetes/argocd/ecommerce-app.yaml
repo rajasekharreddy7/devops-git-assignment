@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ecommerce-gitops
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/rajasekharreddy7/devops-git-assignment.git
+    targetRevision: HEAD
+    path: kubernetes/ecommerce-app
+    helm:
+      valueFiles:
+        - values-dev.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ecommerce-dev
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
