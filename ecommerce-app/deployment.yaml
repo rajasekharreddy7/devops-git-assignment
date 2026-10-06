@@ -3,27 +3,40 @@ kind: Deployment
 metadata:
   name: ecommerce-app
   namespace: ecommerce-dev
-
 spec:
-  replicas: 2
-
+  replicas: 1
   selector:
     matchLabels:
       app: ecommerce-app
-
   template:
     metadata:
       labels:
         app: ecommerce-app
-
     spec:
+      securityContext:
+        runAsNonRoot: true
       imagePullSecrets:
         - name: ecr-registry-secret
-
       containers:
         - name: ecommerce-app
-          image: 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:36
-          imagePullPolicy: Always
-
+          image: 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:51
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

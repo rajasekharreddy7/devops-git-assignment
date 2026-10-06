@@ -34,6 +34,14 @@ pipeline {
             }
         }
 
+	stage('Trivy Filesystem Scan') {
+            steps {
+                dir('ecommerce-app') {
+                    bat '"C:\\Users\\lavan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\trivy.exe" fs --severity HIGH,CRITICAL --exit-code 1 .'
+                }
+            }
+        }
+
         stage('Package') {
             steps {
                 dir('ecommerce-app') {
@@ -45,6 +53,20 @@ pipeline {
             steps {
                 dir('ecommerce-app') {
                     bat '"C:\\Users\\lavan\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t ecommerce-app:%BUILD_NUMBER% .'
+                }
+            }
+        }
+
+	stage('Trivy Image Scan') {
+            steps {
+                bat '"C:\\Users\\lavan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\trivy.exe" image --severity HIGH,CRITICAL --exit-code 1 ecommerce-app:%BUILD_NUMBER%'
+            }
+        }
+
+        stage('Trivy Kubernetes Config Scan') {
+            steps {
+                dir('ecommerce-app') {
+                    bat '"C:\\Users\\lavan\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\trivy.exe" config --severity HIGH,CRITICAL --exit-code 1 deployment.yaml'
                 }
             }
         }
