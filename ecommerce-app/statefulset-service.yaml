@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecommerce-stateful
+  namespace: ecommerce-dev
+spec:
+  clusterIP: None
+  selector:
+    app: ecommerce-stateful
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ecommerce-stateful
+  namespace: ecommerce-dev
+spec:
+  serviceName: ecommerce-stateful
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ecommerce-stateful
+  template:
+    metadata:
+      labels:
+        app: ecommerce-stateful
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: stateful-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: stateful-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 1Gi
