@@ -20,6 +20,11 @@ spec:
       containers:
         - name: ecommerce-app
           image: 006419716500.dkr.ecr.ap-south-2.amazonaws.com/ecommerce-app:51
+          envFrom:
+            - configMapRef:
+                name: ecommerce-config
+            - secretRef:
+                name: ecommerce-db-secret
           securityContext:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
