@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: startup-demo
+  namespace: probes-demo
+spec:
+  containers:
+    - name: nginx
+      image: nginx:alpine
+      command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Simulating slow application startup..."
+          sleep 30
+          exec nginx -g 'daemon off;'
+      ports:
+        - containerPort: 80
+      startupProbe:
+        httpGet:
+          path: /
+          port: 80
+        periodSeconds: 5
+        failureThreshold: 12
+      livenessProbe:
+        httpGet:
+          path: /
+          port: 80
+        periodSeconds: 10
+        failureThreshold: 3
+      readinessProbe:
+        httpGet:
+          path: /
+          port: 80
+        periodSeconds: 5
