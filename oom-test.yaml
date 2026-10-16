@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oom-test
+  namespace: resource-demo
+spec:
+  restartPolicy: Never
+  containers:
+    - name: memory-test
+      image: python:3.12-alpine
+      command:
+        - python
+        - -c
+        - |
+          import time
+          print("Allocating memory...", flush=True)
+          data = bytearray(200 * 1024 * 1024)
+          time.sleep(60)
+      resources:
+        requests:
+          memory: "128Mi"
+          cpu: "50m"
+        limits:
+          memory: "256Mi"
+          cpu: "100m"
